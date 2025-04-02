@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'profile_page.dart'; // Make sure this import is correct
 import 'emergency_sos_page.dart';
 import 'live_location_page.dart';
 import 'fake_call_alert_page.dart';
@@ -7,8 +7,8 @@ import 'defensive_techniques_page.dart';
 import 'voice_activation_page.dart';
 import 'registered_contacts_page.dart';
 import 'safety_awareness_page.dart';
-import 'profile_page.dart';
 import 'spy_camera_detector_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -44,7 +44,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     try {
       final contactsSnapshot = await FirebaseFirestore.instance.collection('contacts').get();
       List<Map<String, String>> contacts = contactsSnapshot.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>?;
+        final data = doc.data() as Map<String, dynamic>?; 
         return {
           "name": data?["name"]?.toString() ?? "Unknown",
           "phone": data?["phone"]?.toString() ?? "",
@@ -81,26 +81,23 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
       appBar: AppBar(
         title: Row(
           children: [
-            GestureDetector(
-              onTap: () {
-                print("Logo clicked! Navigating to ProfilePage...");
+            // Logo as a button
+            IconButton(
+              icon: Hero(
+                tag: 'appLogo',
+                child: Image.asset(
+                  'assets/logo.jpg',
+                  height: 40,
+                  width: 40,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ProfilePage()),
                 );
               },
-              child: Container(
-                padding: EdgeInsets.all(5), // Increases tap area
-                child: Hero(
-                  tag: 'appLogo',
-                  child: Image.asset(
-                    'assets/logo.jpg',
-                    height: 40,
-                    width: 40,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
             ),
             SizedBox(width: 10),
             Text(
@@ -130,8 +127,10 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.white,
-        onPressed: () {
-          // FAB action (optional, can be used for a quick emergency action)
+        onPressed: () {Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ProfilePage()), 
+    );
         },
         child: Image.asset(
           'assets/logo.jpg',
@@ -148,7 +147,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
       padding: EdgeInsets.symmetric(vertical: 8.0),
       child: InkWell(
         onTap: onTap,
-        splashColor: Colors.purple.withOpacity(0.2),
+        splashColor: Colors.purple.withValues(alpha: 0.2),
         child: AnimatedContainer(
           duration: Duration(milliseconds: 500),
           curve: Curves.easeInOut,
